@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:free_to_game/main.dart';
 import 'package:free_to_game/providers/auth_provider.dart';
 import 'package:free_to_game/widgets/main_button.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return Consumer<AuthProvider>(builder: (context  , authprovider , child){
     return Scaffold(
       appBar: AppBar(
         title: const Text("LOGIN"),
@@ -116,14 +119,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       "password": passwordController.text,
                       "device_name": deviceNameController.text
                     }).then((res) {
-                      if (res.first) {}
+                      if (res.first) {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context)=> const ScreenRouter ()),
+                            (route) => false);
+                      } else{
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(res.last),
+                        ));
+                      }
+
                     });
                   },
-                  isLoading: false)
+                  isLoading: authprovider.isLoading)
             ],
           ),
         ),
       ),
     );
-  }
+    });
+}
 }
